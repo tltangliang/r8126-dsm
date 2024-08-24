@@ -132,7 +132,8 @@ ifneq ($(KERNELRELEASE),)
 		EXTRA_CFLAGS += -DENABLE_RX_PACKET_FRAGMENT
 	endif
 else
-	BASEDIR := /lib/modules/$(shell uname -r)
+	
+	BASEDIR := /usr/local/x86_64-pc-linux-gnu/x86_64-pc-linux-gnu/sys-root/usr/lib/modules/DSM-7.2
 	KERNELDIR ?= $(BASEDIR)/build
 	PWD :=$(shell pwd)
 	DRIVERDIR := $(shell find $(BASEDIR)/kernel/drivers/net/ethernet -name realtek -type d)
