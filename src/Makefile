@@ -132,22 +132,22 @@ ifneq ($(KERNELRELEASE),)
 		EXTRA_CFLAGS += -DENABLE_RX_PACKET_FRAGMENT
 	endif
 else
-	BASEDIR := /mnt/d/temp/dsm/linux-4.4.x
-	KERNELDIR ?= $(BASEDIR)
+	BASEDIR := /lib/modules/$(shell uname -r)
+	KERNELDIR ?= $(BASEDIR)/build
 	PWD :=$(shell pwd)
 	DRIVERDIR := $(shell find $(BASEDIR)/kernel/drivers/net/ethernet -name realtek -type d)
 	ifeq ($(DRIVERDIR),)
 		DRIVERDIR := $(shell find $(BASEDIR)/kernel/drivers/net -name realtek -type d)
 	endif
 	ifeq ($(DRIVERDIR),)
-		DRIVERDIR := $(BASEDIR)/drivers/net
+		DRIVERDIR := $(BASEDIR)/kernel/drivers/net
 	endif
 	RTKDIR := $(subst $(BASEDIR)/,,$(DRIVERDIR))
 
 	KERNEL_GCC_VERSION := $(shell cat /proc/version | sed -n 's/.*gcc version \([[:digit:]]\.[[:digit:]]\.[[:digit:]]\).*/\1/p')
 	CCVERSION = $(shell $(CC) -dumpversion)
 
-	KVER = 4.4.302+
+	KVER = $(shell uname -r)
 	KMAJ = $(shell echo $(KVER) | \
 	sed -e 's/^\([0-9][0-9]*\)\.[0-9][0-9]*\.[0-9][0-9]*.*/\1/')
 	KMIN = $(shell echo $(KVER) | \
