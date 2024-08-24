@@ -32,55 +32,38 @@
  *  US6,570,884, US6,115,776, and US6,327,625.
  ***********************************************************************************/
 
-#ifndef _LINUX_RTLTOOL_H
-#define _LINUX_RTLTOOL_H
+#ifndef _LINUX_R8126_RSS_H
+#define _LINUX_R8126_RSS_H
 
-#define SIOCRTLTOOL		SIOCDEVPRIVATE+1
+#include <linux/netdevice.h>
+#include <linux/types.h>
 
-enum rtl_cmd {
-        RTLTOOL_READ_MAC=0,
-        RTLTOOL_WRITE_MAC,
-        RTLTOOL_READ_PHY,
-        RTLTOOL_WRITE_PHY,
-        RTLTOOL_READ_EPHY,
-        RTLTOOL_WRITE_EPHY,
-        RTLTOOL_READ_ERI,
-        RTLTOOL_WRITE_ERI,
-        RTLTOOL_READ_PCI,
-        RTLTOOL_WRITE_PCI,
-        RTLTOOL_READ_EEPROM,
-        RTLTOOL_WRITE_EEPROM,
+#define RTL8126_RSS_KEY_SIZE     40  /* size of RSS Hash Key in bytes */
+#define RTL8126_MAX_INDIRECTION_TABLE_ENTRIES 128
 
-        RTL_READ_OOB_MAC,
-        RTL_WRITE_OOB_MAC,
-
-        RTL_ENABLE_PCI_DIAG,
-        RTL_DISABLE_PCI_DIAG,
-
-        RTL_READ_MAC_OCP,
-        RTL_WRITE_MAC_OCP,
-
-        RTL_DIRECT_READ_PHY_OCP,
-        RTL_DIRECT_WRITE_PHY_OCP,
-
-        RTLTOOL_INVALID
+enum rtl8126_rss_flag {
+        RTL_8125_RSS_FLAG_HASH_UDP_IPV4  = (1 << 0),
+        RTL_8125_RSS_FLAG_HASH_UDP_IPV6  = (1 << 1),
 };
 
-struct rtltool_cmd {
-        __u32	cmd;
-        __u32	offset;
-        __u32	len;
-        __u32	data;
-};
+struct rtl8126_private;
 
-enum mode_access {
-        MODE_NONE=0,
-        MODE_READ,
-        MODE_WRITE
-};
+int rtl8126_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
+                      u32 *rule_locs);
+int rtl8126_set_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd);
+u32 rtl8126_get_rxfh_key_size(struct net_device *netdev);
+u32 rtl8126_rss_indir_size(struct net_device *netdev);
+int rtl8126_get_rxfh(struct net_device *netdev, u32 *indir, u8 *key,
+                     u8 *hfunc);
+int rtl8126_set_rxfh(struct net_device *netdev, const u32 *indir,
+                     const u8 *key, const u8 hfunc);
+void rtl8126_rx_hash(struct rtl8126_private *tp,
+                     struct RxDescV3 *descv3,
+                     struct sk_buff *skb);
+void _rtl8126_config_rss(struct rtl8126_private *tp);
+void rtl8126_config_rss(struct rtl8126_private *tp);
+void rtl8126_init_rss(struct rtl8126_private *tp);
+u32 rtl8126_rss_indir_tbl_entries(struct rtl8126_private *tp);
+void rtl8126_disable_rss(struct rtl8126_private *tp);
 
-#ifdef __KERNEL__
-int rtl8126_tool_ioctl(struct rtl8126_private *tp, struct ifreq *ifr);
-#endif
-
-#endif /* _LINUX_RTLTOOL_H */
+#endif /* _LINUX_R8126_RSS_H */

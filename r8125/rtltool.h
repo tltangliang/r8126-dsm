@@ -2,10 +2,10 @@
 /*
 ################################################################################
 #
-# r8126 is the Linux device driver released for Realtek 5 Gigabit Ethernet
+# r8125 is the Linux device driver released for Realtek 2.5Gigabit Ethernet
 # controllers with PCI-Express interface.
 #
-# Copyright(c) 2024 Realtek Semiconductor Corp. All rights reserved.
+# Copyright(c) 2022 Realtek Semiconductor Corp. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -80,7 +80,7 @@ enum mode_access {
 };
 
 #ifdef __KERNEL__
-int rtl8126_tool_ioctl(struct rtl8126_private *tp, struct ifreq *ifr);
+int rtl8125_tool_ioctl(struct rtl8125_private *tp, struct ifreq *ifr);
 #endif
 
 #endif /* _LINUX_RTLTOOL_H */

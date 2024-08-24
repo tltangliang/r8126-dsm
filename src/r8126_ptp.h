@@ -32,55 +32,50 @@
  *  US6,570,884, US6,115,776, and US6,327,625.
  ***********************************************************************************/
 
-#ifndef _LINUX_RTLTOOL_H
-#define _LINUX_RTLTOOL_H
+#ifndef _LINUX_R8126_PTP_H
+#define _LINUX_R8126_PTP_H
 
-#define SIOCRTLTOOL		SIOCDEVPRIVATE+1
+#include <linux/ktime.h>
+#include <linux/timecounter.h>
+#include <linux/net_tstamp.h>
+#include <linux/ptp_clock_kernel.h>
+#include <linux/ptp_classify.h>
 
-enum rtl_cmd {
-        RTLTOOL_READ_MAC=0,
-        RTLTOOL_WRITE_MAC,
-        RTLTOOL_READ_PHY,
-        RTLTOOL_WRITE_PHY,
-        RTLTOOL_READ_EPHY,
-        RTLTOOL_WRITE_EPHY,
-        RTLTOOL_READ_ERI,
-        RTLTOOL_WRITE_ERI,
-        RTLTOOL_READ_PCI,
-        RTLTOOL_WRITE_PCI,
-        RTLTOOL_READ_EEPROM,
-        RTLTOOL_WRITE_EEPROM,
-
-        RTL_READ_OOB_MAC,
-        RTL_WRITE_OOB_MAC,
-
-        RTL_ENABLE_PCI_DIAG,
-        RTL_DISABLE_PCI_DIAG,
-
-        RTL_READ_MAC_OCP,
-        RTL_WRITE_MAC_OCP,
-
-        RTL_DIRECT_READ_PHY_OCP,
-        RTL_DIRECT_WRITE_PHY_OCP,
-
-        RTLTOOL_INVALID
+struct rtl8126_ptp_info {
+        s64 time_sec;
+        u32 time_ns;
+        u16 ts_info;
 };
 
-struct rtltool_cmd {
-        __u32	cmd;
-        __u32	offset;
-        __u32	len;
-        __u32	data;
+#ifndef _STRUCT_TIMESPEC
+#define _STRUCT_TIMESPEC
+struct timespec {
+        __kernel_old_time_t tv_sec;     /* seconds */
+        long            tv_nsec;    /* nanoseconds */
 };
-
-enum mode_access {
-        MODE_NONE=0,
-        MODE_READ,
-        MODE_WRITE
-};
-
-#ifdef __KERNEL__
-int rtl8126_tool_ioctl(struct rtl8126_private *tp, struct ifreq *ifr);
 #endif
 
-#endif /* _LINUX_RTLTOOL_H */
+enum PTP_CMD_TYPE {
+        PTP_CMD_SET_LOCAL_TIME = 0,
+        PTP_CMD_DRIFT_LOCAL_TIME,
+        PTP_CMD_LATCHED_LOCAL_TIME,
+};
+
+
+struct rtl8126_private;
+struct RxDescV3;
+
+int rtl8126_get_ts_info(struct net_device *netdev,
+                        struct ethtool_ts_info *info);
+
+void rtl8126_ptp_reset(struct rtl8126_private *tp);
+void rtl8126_ptp_init(struct rtl8126_private *tp);
+void rtl8126_ptp_suspend(struct rtl8126_private *tp);
+void rtl8126_ptp_stop(struct rtl8126_private *tp);
+
+int rtl8126_ptp_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd);
+
+void rtl8126_rx_ptp_pktstamp(struct rtl8126_private *tp, struct sk_buff *skb,
+                             struct RxDescV3 *descv3);
+
+#endif /* _LINUX_R8126_PTP_H */

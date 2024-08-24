@@ -1,0 +1,1 @@
+cmd_/mnt/d/temp/dsm/r8126-10.013.00/src/r8126.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /mnt/d/temp/dsm/r8126-10.013.00/src/r8126.ko /mnt/d/temp/dsm/r8126-10.013.00/src/r8126.o /mnt/d/temp/dsm/r8126-10.013.00/src/r8126.mod.o
